@@ -1,0 +1,438 @@
+function varargout = Hand_Keypoints_Annotation_Tool(varargin)
+% Hand_Keypoints_Annotation_Tool MATLAB code for Hand_Keypoints_Annotation_Tool.fig
+%      Hand_Keypoints_Annotation_Tool, by itself, creates a new Hand_Keypoints_Annotation_Tool or raises the existing
+%      singleton*.
+%
+%      H = Hand_Keypoints_Annotation_Tool returns the handle to a new Hand_Keypoints_Annotation_Tool or the handle to
+%      the existing singleton*.
+%
+%      Hand_Keypoints_Annotation_Tool('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in Hand_Keypoints_Annotation_Tool.M with the given input arguments.
+%
+%      Hand_Keypoints_Annotation_Tool('Property','Value',...) creates a new Hand_Keypoints_Annotation_Tool or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before Hand_Keypoints_Annotation_Tool_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to Hand_Keypoints_Annotation_Tool_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help Hand_Keypoints_Annotation_Tool
+
+% Last Modified by GUIDE v2.5 21-Nov-2017 14:47:03
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @Hand_Keypoints_Annotation_Tool_OpeningFcn, ...
+                   'gui_OutputFcn',  @Hand_Keypoints_Annotation_Tool_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before Hand_Keypoints_Annotation_Tool is made visible.
+function Hand_Keypoints_Annotation_Tool_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to Hand_Keypoints_Annotation_Tool (see VARARGIN)
+
+% Choose default command line output for Hand_Keypoints_Annotation_Tool
+handles.output = hObject
+
+clc;
+
+handles.needToSave = false;
+
+%axes(handles.axsFrame);
+axis off;
+
+	
+% set(hObject, 'DeleteFcn', btnQuit_Callback(handles.btnQuit, eventdata, handles));
+% handles.sliderListener = addlistener(handles.slider1, 'ContinuousValueChange', @(hObject, eventdata) sliderChange(hObject, eventdata));
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes Hand_Keypoints_Annotation_Tool wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = Hand_Keypoints_Annotation_Tool_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+% --- Executes on button press in btnClear.
+function btnClear_Callback(hObject, eventdata, handles)
+% hObject    handle to btnClear (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+close(gcbf)
+Multimodal_Dataset_GUI
+
+
+% --- Executes on slider movement.
+function slider1_Callback(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+
+% --- Executes during object creation, after setting all properties.
+function slider1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+handles.sliderListener = addlistener(hObject, 'ContinuousValueChange', @(hObject, eventdata) sliderChange(hObject, eventdata));
+
+
+function sliderChange(hFigure, eventdata)
+handles = guidata(hFigure);
+handles.currentFrame = round(get(handles.slider1, 'Value'));
+guidata(hFigure, handles);
+set(handles.lblFrameNum, 'String', ['Frame ', num2str(handles.currentFrame),' of ', num2str(size(handles.frames, 4))]);
+frame = handles.frames(:, :, :, handles.currentFrame);
+imshow(frame, 'parent', handles.axsFrame);
+set(handles.W_X, 'String','-');
+set(handles.W_Y, 'String','-' );
+set(handles.T_X, 'String','-');
+set(handles.T_Y, 'String','-' );
+set(handles.M_X, 'String','-');
+set(handles.M_Y, 'String','-');
+set(handles.L_X, 'String','-');
+set(handles.L_Y, 'String','-');
+set(handles.R_X, 'String','-');
+set(handles.R_Y, 'String','-' );
+set(handles.I_X, 'String','-');
+set(handles.I_Y, 'String','-' );
+
+
+
+% --- Executes on button press in loadVideo.
+function loadVideo_Callback(hObject, eventdata, handles)
+% hObject    handle to loadVideo (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.needToSave = false;
+handles.currentFrame = 1;
+%Browse video
+[chosenfile,chosendirectory] = uigetfile('..\*.*');
+
+file= [chosendirectory chosenfile];
+handles.videoName = chosenfile;
+vr = VideoReader(file);
+handles.frames = read(vr);
+handles.numFrames = size(handles.frames, 4);
+%REMOVE adds annotation boxes to frames
+% [m n] = size(handles.annotations);
+% for i = 1:m
+%     %if(handles.annotations(i,2)==1||handles.annotations(i,2)==2)
+%        x= handles.annotations(i,4);
+%        y=handles.annotations(i,3);
+%        width = handles.annotations(i,5);
+%        height = handles.annotations(i,6);
+%        top = x;
+%        bottom = x + height;
+%        left = y;
+%        right = y + width;
+%        l = handles.annotations(i,1);
+%        frame = handles.frames(:,:,:,l);
+%        handles.frames(:,:,:,l) = draw_rectangle(frame, top, bottom, left, right);
+%    % end
+% end
+guidata(hObject, handles);
+%set(handles.videoName, 'String', file);
+
+set(handles.slider1, 'Min', 1);
+set(handles.slider1, 'Max', handles.numFrames);
+set(handles.slider1, 'SliderStep', [1 5]/(handles.numFrames-1));
+
+set(handles.slider1, 'Value', 1);
+
+sliderChange(hObject, eventdata)
+
+
+
+drawnow;
+
+
+% --- Executes on button press in loadAnnotations.
+function loadAnnotations_Callback(hObject, eventdata, handles)
+% hObject    handle to loadAnnotations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+%Browse video
+[annot_file,annot_directory] = uigetfile('..\*.*');
+csv_file= [annot_directory annot_file];
+set(handles.annotName, 'String', annot_file);
+handles.annotations = csvread(csv_file);
+set(handles.startFrmNum, 'String', min(handles.annotations(:,1)));
+set(handles.endFrmNum, 'String', max(handles.annotations(:,1)));
+guidata(hObject, handles);
+
+
+% --- Executes on selection change in listbox2.
+function listbox2_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox2 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox2
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox3.
+function listbox3_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox3 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox3
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton11.
+function pushbutton11_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_save.
+function pushbutton_save_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_save (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Fig2 = figure('Menu','none','Toolbar','none','Units','normalized',...
+%     'Position',[-1000 -1000 1 1]);
+% copyobj(handles.axsFrame, Fig2);
+% saveas(Fig2, 'myFigure.jpeg');
+% print(Fig2,'-dpng','-r200');
+% delete(Fig2);
+
+currentFolder = pwd;
+%make main directory
+mkdir(currentFolder, 'Hand Annotations');
+path_mainDirectory = strcat(currentFolder,'\Hand Annotations');
+cd(path_mainDirectory);
+
+[tok,rem]=strtok(handles.videoName,'.');
+file_name = strcat(tok, '_frame_',num2str(handles.currentFrame));
+csv_file_name = [tok '_2D_Annotations.csv'];
+
+%Save annotations csv file
+
+guidata(hObject, handles);
+save_matrix = [handles.currentFrame, ...
+str2double(get(handles.W_X,'String')), ...
+str2double(get(handles.W_Y,'String')), ...
+ str2double(get(handles.T_X,'String')), ...
+str2double(get(handles.T_Y,'String')), ...
+str2double(get(handles.I_X,'String')), ...
+str2double(get(handles.I_Y,'String')) ,...
+str2double(get(handles.M_X,'String')), ...
+str2double(get(handles.M_Y,'String')), ...
+str2double(get(handles.R_X,'String')), ...
+str2double(get(handles.R_Y,'String')), ...
+str2double(get(handles.L_X,'String')), ...
+str2double(get(handles.L_Y,'String'))];
+
+
+figure_name = strcat(tok, '_frame_',num2str(handles.currentFrame),'.jpg');
+dlmwrite (csv_file_name, save_matrix, '-append');
+%make images sub-directory
+mkdir(path_mainDirectory, 'Images');
+path_imagesDirectory = strcat(path_mainDirectory,'\Images');
+cd(path_imagesDirectory);
+frame = handles.frames(:, :, :, handles.currentFrame);
+%save image in directory
+imwrite(frame, figure_name);
+cd(currentFolder);
+
+
+
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function axes11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to axes11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate axes11
+
+
+% --- Executes on button press in pushbutton_L_S.
+function pushbutton_W_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_L_S (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.W_X, 'String', '');
+set(handles.W_Y, 'String', '');
+[x_W,y_W,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.L_S_X, 'String',x_W);
+set(handles.L_S_Y, 'String',y_W );
+
+
+% --- Executes on button press in pushbutton_R_S.
+function pushbutton_R_S_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_R_S (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.R_S_X, 'String', '');
+set(handles.R_S_Y, 'String', '');
+[x_R_S,y_R_S,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.R_S_X, 'String',x_R_S);
+set(handles.R_S_Y, 'String',y_R_S );
+
+
+% --- Executes on button press in pushbutton_L_E.
+function pushbutton_L_E_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_L_E (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.L_E_X, 'String', '');
+set(handles.L_E_Y, 'String', '');
+[x_L_E,y_L_E,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.L_E_X, 'String',x_L_E);
+set(handles.L_E_Y, 'String',y_L_E );
+
+
+% --- Executes on button press in pushbutton_R_E.
+function pushbutton_R_E_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_R_E (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.R_E_X, 'String', '');
+set(handles.R_E_Y, 'String', '');
+[x_R_E,y_R_E,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.R_E_X, 'String',x_R_E);
+set(handles.R_E_Y, 'String',y_R_E );
+
+
+
+% --- Executes on button press in pushbutton18.
+function pushbutton18_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton18 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_L_W.
+function pushbutton_L_W_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_L_W (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.L_W_X, 'String', '');
+set(handles.L_W_Y, 'String', '');
+[x_L_W,y_L_W,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.L_W_X, 'String',x_L_W);
+set(handles.L_W_Y, 'String',y_L_W );
+
+
+% --- Executes on button press in pushbutton_R_W.
+function pushbutton_R_W_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_R_W (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.R_W_X, 'String', '');
+set(handles.R_W_Y, 'String', '');
+[x_R_W,y_R_W,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.R_W_X, 'String',x_R_W);
+set(handles.R_W_Y, 'String',y_R_W );
+
+
+% --- Executes on button press in pushbutton_Nose.
+function pushbutton_Nose_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_Nose (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.N_X, 'String', '');
+set(handles.N_Y, 'String', '');
+[x_N,y_N,button,ax]=ginputax(handles.axsFrame,1);
+set(handles.N_X, 'String',x_N);
+set(handles.N_Y, 'String',y_N );
